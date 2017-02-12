@@ -12,8 +12,9 @@ RUN echo "deb http://repo.mongodb.org/apt/ubuntu $(cat /etc/lsb-release | grep D
 
 # Update apt-get sources AND install MongoDB
 RUN apt-get update && \
-    apt-get install -y mongodb-org && \
+    apt-get install -y mongodb-org netcat && \
 #    service mongod stop && \
+# This could make the image size smaller.
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Create the MongoDB data directory
@@ -21,7 +22,7 @@ RUN mkdir -p /data/db
 
 # Taplaw specific steps
 ADD scripts /scripts
-RUN chmod +x /scripts/*.sh
+RUN chmod +x /scripts/*
 RUN touch /.firstrun
 
 # Expose port 27017 from the container to the host
@@ -29,5 +30,6 @@ EXPOSE 27017
 EXPOSE 28017
 
 # Dockerized entry-point application
+#ENTRYPOINT ["/usr/bin/mongod"]
 ENTRYPOINT ["/scripts/run.sh"]
-CMD [""]
+#CMD [""]
